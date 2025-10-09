@@ -11,19 +11,45 @@ Incident Check (check()): It compares the updatedAt timestamp with the current b
 On-Chain Response (shouldRespond()): The trap signals the Drosera Relay to execute a function on a separate, deployed Notifier Contract, logging the stale feed's address and timestamp via an event.
 
 Project Structure
-File	- Type	- Description
-StalePriceFeedTrap.sol	Drosera Trap	The core logic. Collects the timestamp and checks for staleness against a 1-hour threshold.
-PriceFeedNotifier.sol	Response Contract	The target contract that receives the alert from the Drosera Relay and emits a PriceFeedIsStale event.
-MockAggregatorOracle.sol	Testing Mock	A deployable mock for the Chainlink Aggregator V3 interface, used for testing and deployment on testnets (like Hoodi).
-drosera.toml	Configuration	Defines the execution parameters, targets the response contract, and specifies the network settings.
+
+- File
+StalePriceFeedTrap.sol	
+- Type
+Drosera Trap	
+- Description
+The core logic. Collects the timestamp and checks for staleness against a 1-hour threshold.
+
+- File
+PriceFeedNotifier.sol	
+- Type
+Response Contract
+- Description
+The target contract that receives the alert from the Drosera Relay and emits a PriceFeedIsStale event.
+
+- File
+MockAggregatorOracle.sol	
+- Type
+Testing Mock
+- Description
+A deployable mock for the Chainlink Aggregator V3 interface, used for testing and deployment on testnets (like Hoodi).
+
+- File
+drosera.toml
+- Type
+Configuration
+- Description
+Defines the execution parameters, targets the response contract, and specifies the network settings.
 
 Contract Details
+
 StalePriceFeedTrap.sol
+
 Monitored Feed: 0xfb3B397F3D52E214630DECE30a4C6cF2563Fc24A (This should be replaced with a production Chainlink address when moving off-testnet).
 
 Stale Threshold: 3600 seconds (1 hour).
 
 PriceFeedNotifier.sol
+
 This contract defines the alert mechanism. Any monitoring system (like a custom bot or dashboard) can subscribe to this event to trigger off-chain alerts or on-chain governance actions.
 
 Solidity
@@ -37,12 +63,40 @@ event PriceFeedIsStale(
 Drosera Configuration (drosera.toml)
 The Drosera setup is configured to run on the Hoodi Testnet.
 
-Parameter	Value	Role
-response_contract	0xbfb1e09454df1f9c85ddb867781154f0217e1931	Address of the deployed PriceFeedNotifier.sol.
-response_function	flagStalePriceFeed(address,uint256)	The function to be called by the Drosera Relay.
-cooldown_period_blocks	30	Minimum 30 blocks between successful response calls.
-private_trap	true	Limits access to the trap logic.
-whitelist	["0x703D42F8792C0c6B47F9b8085a13ab05b5E3eF69"]	List of approved Drosera Operator addresses.
+- Parameter	
+response_contract
+-	Value
+0xbfb1e09454df1f9c85ddb867781154f0217e1931
+- Role
+Address of the deployed PriceFeedNotifier.sol.
+
+- Parameter
+response_function
+-	Value
+flagStalePriceFeed(address,uint256)
+- Role
+The function to be called by the Drosera Relay.
+
+- Parameter
+cooldown_period_blocks
+- Value
+30
+- Role
+Minimum 30 blocks between successful response calls.
+
+- Parameter
+private_trap
+- Value
+true
+- Role
+Limits access to the trap logic.
+
+-Parameter
+whitelist	
+- Value
+["0x703D42F8792C0c6B47F9b8085a13ab05b5E3eF69"]
+- Role
+List of approved Drosera Operator addresses.
 
 Setup & Deployment
 Foundry was used for compilation.
@@ -68,6 +122,7 @@ Bash
 # Ensure your private key is available as an environment variable
 # and run from the project root.
 drosera apply
+
 4. Test Locally
 You can simulate the trap's behavior against a local fork before deployment:
 
